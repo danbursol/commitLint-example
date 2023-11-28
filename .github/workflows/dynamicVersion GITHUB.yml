@@ -1,0 +1,28 @@
+name: Dynamic Version
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  execute_script:
+    runs-on: [self-hosted, cdorunner-4p-kernel-small]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # needed to commit changes, as default token does not trigger future actions
+          token: ${{ secrets.BAIKAL_CHECKOUT_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.9.0 '
+
+      - name: Execute script
+        run: npm install && node version_updater.js
+
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'chore(version): bump up version'

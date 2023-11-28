@@ -1,0 +1,16 @@
+name: Release notes sync (New)
+
+on:
+    pull_request:
+      branches:
+        - master 
+jobs:
+  sync:
+    runs-on: [ self-hosted, cdorunner-4p-kernel-small ]
+    steps:
+      - name: GHA Runner Workspace Cleaner
+        uses: jstone28/runner-workspace-cleaner@v1.0.0
+      - uses: actions/checkout@v3
+      - name: Publish to package manager
+        run: |
+          ./lanuza/pipeline/publish-to-artifacts.sh ${{ secrets.AZURE_ARTIFACTS_TOKEN }}

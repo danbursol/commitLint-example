@@ -1,0 +1,41 @@
+name: Node CI
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - node/**
+      - .github/workflows/nodejs.yml
+  pull_request:
+    paths:
+      - node/**
+      - .github/workflows/nodejs.yml
+
+jobs:
+  build:
+    runs-on: [self-hosted, cdorunner-4p-kernel-small]
+    defaults:
+      run:
+        working-directory: node
+
+    strategy:
+      matrix:
+        node: ['12', '14', '16','18','20']
+
+    steps:
+      # Checkout repo source code
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+        with:
+          github-token: ${{ secrets.BAIKAL_CHECKOUT_TOKEN }}
+          baikal-secrets: ${{ secrets.BAIKAL_SECRETS }}
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - run: npm ci
+      - run: delivery/scripts/build.sh
+      - run: delivery/scripts/test-unit.sh

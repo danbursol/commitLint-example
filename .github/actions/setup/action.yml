@@ -1,0 +1,16 @@
+name: Setup CI
+description: Initializes the runner environment with common and shared steps
+inputs:
+  baikal-secrets:
+    required: true
+    description: The baikal secrets
+  github-token:
+    required: true
+    description: Personal access token (PAT) used to fetch the repositories
+    default: ${{ github.token }}
+runs:
+  using: composite
+  steps:
+    - uses: Telefonica/baikal-ci-actions/baikal-environment@v2
+      with:
+        baikal-secrets: ${{ inputs.baikal-secrets }}
